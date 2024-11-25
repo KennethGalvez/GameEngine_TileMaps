@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -27,4 +26,6 @@ public:
     entt::registry& registry;
     std::string name;
     std::vector<RenderSystem*> renderSystems;
+    std::vector<System*> inputSystems; // Sistemas de input
+
 };

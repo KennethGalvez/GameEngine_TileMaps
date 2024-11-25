@@ -8,10 +8,34 @@ struct NameComponent {
 
 struct PositionComponent {
     int x, y;
+
+    PositionComponent(int x = 0, int y = 0) : x(x), y(y) {}
+};
+
+struct DirectionComponent {
+    enum Direction { LEFT, RIGHT };
+    Direction direction;
+
+    DirectionComponent(Direction direction = RIGHT) : direction(direction) {}
 };
 
 struct TextureComponent {
     SDL_Texture* texture;
-    int width;
-    int height;
+    int width, height;
+
+    TextureComponent(SDL_Texture* texture = nullptr, int width = 0, int height = 0)
+        : texture(texture), width(width), height(height) {}
+};
+
+struct AnimationComponent {
+    std::vector<SDL_Texture*> frames;
+    int currentFrame;
+    float frameTime;
+    float elapsedTime;
+
+    AnimationComponent(const std::vector<SDL_Texture*>& frames,
+                       int currentFrame = 0,
+                       float frameTime = 0.1f,
+                       float elapsedTime = 0.0f)
+        : frames(frames), currentFrame(currentFrame), frameTime(frameTime), elapsedTime(elapsedTime) {}
 };

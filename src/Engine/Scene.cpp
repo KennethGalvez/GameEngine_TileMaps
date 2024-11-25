@@ -25,19 +25,34 @@ void Scene::setup() {
 
 void Scene::render(SDL_Renderer* renderer) {
     for (auto& system : renderSystems) {
-        system->run(renderer);
+        // Detectar si es CharacterRenderSystem
+        if (auto* charSystem = dynamic_cast<CharacterRenderSystem*>(system)) {
+            charSystem->run(renderer, registry, 0.016f); // Aproximadamente 60 FPS
+        } else {
+            system->run(renderer);
+        }
     }
 }
 
+
 // Implementation of processEvents
 void Scene::processEvents(SDL_Event& event) {
-    // Handle event logic here
+    for (auto& system : inputSystems) {
+        // Procesar eventos en sistemas de input
+        dynamic_cast<InputSystem*>(system)->processEvents(event, registry);
+    }
 }
+
 
 // Implementation of update
 void Scene::update(float deltaTime) {
-    // Update logic here (e.g., update entities, systems, etc.)
+    for (auto& system : renderSystems) {
+        if (auto* charSystem = dynamic_cast<CharacterRenderSystem*>(system)) {
+            charSystem->run(nullptr, registry, deltaTime); // Actualizar animación
+        }
+    }
 }
+
 
 // Función para cargar una textura desde un archivo
 SDL_Texture* loadTexture(const std::string& path, SDL_Renderer* renderer) {
@@ -50,4 +65,3 @@ SDL_Texture* loadTexture(const std::string& path, SDL_Renderer* renderer) {
     SDL_FreeSurface(surface);
     return texture;
 }
-

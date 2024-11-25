@@ -4,6 +4,8 @@
 #include "Systems.h"
 #include <iostream>
 #include <entt/entt.hpp>
+#include "Entity.h"
+
 
 class SquareRenderSystem : public RenderSystem {
   public:
@@ -26,26 +28,33 @@ class DemoGame : public Game {
         std::cout << "HELLO WORLD" << std::endl;  
         sampleScene = new Scene("SAMPLE SCENE", registry);
 
-        // textura de fondo
+        // Fondo
         SDL_Texture* backgroundTexture = loadTexture("src/DemoGame/Fondo.png", renderer);
+        sampleScene->renderSystems.push_back(new BackgroundRenderSystem(backgroundTexture));
 
-        // Verificar la textura
-        if (!backgroundTexture) {
-            std::cerr << "Failed to load background texture." << std::endl;
-            return;
+        // Crear personaje
+        auto* character = sampleScene->createEntity("Player");
+        character->addComponent<PositionComponent>(400, 300); // Coordenadas iniciales
+        character->addComponent<DirectionComponent>(DirectionComponent::RIGHT);
+
+        SDL_Texture* idleFrame1 = loadTexture("src/DemoGame/Personaje.png", renderer);
+        if (!idleFrame1) {
+            std::cerr << "Error: No se pudo cargar Personaje.png" << std::endl;
+        }
+        SDL_Texture* idleFrame2 = loadTexture("src/DemoGame/Personaje3.png", renderer);
+        if (!idleFrame2) {
+            std::cerr << "Error: No se pudo cargar Personaje3.png" << std::endl;
         }
 
-        // Sistema de renderizado de fondo y agregarlo manualmente a renderSystems
-        BackgroundRenderSystem* backgroundSystem = new BackgroundRenderSystem(backgroundTexture);
-        sampleScene->renderSystems.push_back(backgroundSystem);
+        character->addComponent<TextureComponent>(idleFrame1, 150, 100); // Tamaño del sprite
+        character->addComponent<AnimationComponent>(std::vector<SDL_Texture*>{idleFrame1, idleFrame2}, 0, 0.1f, 0.0f);
 
-        
-        //auto squareSystem = new SquareRenderSystem();
-        //sampleScene->renderSystems.push_back(squareSystem);
+        // Agregar sistemas
+        sampleScene->renderSystems.push_back(new CharacterRenderSystem());
+        sampleScene->inputSystems.push_back(new InputSystem());
 
         setScene(sampleScene);
     }
-
 
 
 };

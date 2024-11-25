@@ -29,10 +29,16 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
+    static Uint32 lastTime = SDL_GetTicks(); // Tiempo del último frame
+    Uint32 currentTime = SDL_GetTicks();    // Tiempo actual
+    float deltaTime = (currentTime - lastTime) / 1000.0f; // Delta time en segundos
+    lastTime = currentTime;
+
     if (currentScene) {
-        currentScene->update(0.0f); // You can pass delta time here
+        currentScene->update(deltaTime); // Pasa deltaTime a la escena
     }
 }
+
 
 void Game::render() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Black background
