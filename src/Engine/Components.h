@@ -13,7 +13,7 @@ struct PositionComponent {
 };
 
 struct DirectionComponent {
-    enum Direction { LEFT, RIGHT };
+    enum Direction { LEFT, RIGHT, UP, DOWN };
     Direction direction;
 
     DirectionComponent(Direction direction = RIGHT) : direction(direction) {}
@@ -39,3 +39,13 @@ struct AnimationComponent {
                        float elapsedTime = 0.0f)
         : frames(frames), currentFrame(currentFrame), frameTime(frameTime), elapsedTime(elapsedTime) {}
 };
+
+struct FireComponent {
+    bool active;
+    float timeRemaining; 
+
+    FireComponent(bool active = false, float timeRemaining = 0.0f)
+        : active(active), timeRemaining(timeRemaining) {}
+};
+
+

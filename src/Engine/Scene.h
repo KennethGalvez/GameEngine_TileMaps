@@ -27,5 +27,6 @@ public:
     std::string name;
     std::vector<RenderSystem*> renderSystems;
     std::vector<System*> inputSystems; // Sistemas de input
+    std::vector<System*> updateSystems; // Sistemas de actualización
 
 };

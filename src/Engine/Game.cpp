@@ -1,4 +1,3 @@
-
 #include "Game.h"
 #include <sstream>
 #include <SDL2/SDL.h>

@@ -25,14 +25,16 @@ void Scene::setup() {
 
 void Scene::render(SDL_Renderer* renderer) {
     for (auto& system : renderSystems) {
-        // Detectar si es CharacterRenderSystem
-        if (auto* charSystem = dynamic_cast<CharacterRenderSystem*>(system)) {
+        if (auto* fireRenderSystem = dynamic_cast<FireRenderSystem*>(system)) {
+            fireRenderSystem->run(renderer, registry); // Renderizar fuegos
+        } else if (auto* charSystem = dynamic_cast<CharacterRenderSystem*>(system)) {
             charSystem->run(renderer, registry, 0.016f); // Aproximadamente 60 FPS
         } else {
             system->run(renderer);
         }
     }
 }
+
 
 
 // Implementation of processEvents
@@ -46,12 +48,20 @@ void Scene::processEvents(SDL_Event& event) {
 
 // Implementation of update
 void Scene::update(float deltaTime) {
+    
+    for (auto& system : updateSystems) {
+        if (auto* fireSystem = dynamic_cast<FireSystem*>(system)) {
+            fireSystem->run(registry, deltaTime); // Ejecutar lógica de los fuegos
+        }
+    }
+
     for (auto& system : renderSystems) {
         if (auto* charSystem = dynamic_cast<CharacterRenderSystem*>(system)) {
             charSystem->run(nullptr, registry, deltaTime); // Actualizar animación
         }
     }
 }
+
 
 
 // Función para cargar una textura desde un archivo

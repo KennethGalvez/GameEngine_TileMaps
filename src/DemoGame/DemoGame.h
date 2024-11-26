@@ -25,7 +25,7 @@ class DemoGame : public Game {
         : Game("SAMPLE GAME", 1024, 768) {}
 
     void setup() override {
-        std::cout << "HELLO WORLD" << std::endl;  
+        std::cout << "HELLO WORLD" << std::endl;
         sampleScene = new Scene("SAMPLE SCENE", registry);
 
         // Fondo
@@ -34,27 +34,41 @@ class DemoGame : public Game {
 
         // Crear personaje
         auto* character = sampleScene->createEntity("Player");
-        character->addComponent<PositionComponent>(400, 300); // Coordenadas iniciales
+        character->addComponent<PositionComponent>(400, 300);
         character->addComponent<DirectionComponent>(DirectionComponent::RIGHT);
 
         SDL_Texture* idleFrame1 = loadTexture("src/DemoGame/Personaje.png", renderer);
-        if (!idleFrame1) {
-            std::cerr << "Error: No se pudo cargar Personaje.png" << std::endl;
-        }
         SDL_Texture* idleFrame2 = loadTexture("src/DemoGame/Personaje3.png", renderer);
-        if (!idleFrame2) {
-            std::cerr << "Error: No se pudo cargar Personaje3.png" << std::endl;
-        }
-
-        character->addComponent<TextureComponent>(idleFrame1, 150, 100); // Tamaño del sprite
+        character->addComponent<TextureComponent>(idleFrame1, 150, 100);
+        //character->addComponent<AnimationComponent>({idleFrame1, idleFrame2}, 0, 0.1f, 0.0f);
         character->addComponent<AnimationComponent>(std::vector<SDL_Texture*>{idleFrame1, idleFrame2}, 0, 0.1f, 0.0f);
 
-        // Agregar sistemas
         sampleScene->renderSystems.push_back(new CharacterRenderSystem());
         sampleScene->inputSystems.push_back(new InputSystem());
 
+        // Crear fuegos
+        SDL_Texture* fireTexture = loadTexture("src/DemoGame/Fuego.png", renderer);
+        if (!fireTexture) {
+            std::cerr << "Error: No se pudo cargar Fuego.png" << std::endl;
+            return;
+        }
+
+        for (int i = 0; i < 10; ++i) { // Crear 10 entidades de fuego
+            auto* fireEntity = sampleScene->createEntity("Fire");
+            fireEntity->addComponent<PositionComponent>(std::rand() % 1024, std::rand() % 768);
+            fireEntity->addComponent<FireComponent>(false, 0.0f); // Inicialmente inactivos
+            fireEntity->addComponent<TextureComponent>(fireTexture, 50, 50);
+        }
+
+        // Agregar sistemas de fuego
+        sampleScene->renderSystems.push_back(new FireRenderSystem(fireTexture));
+        sampleScene->updateSystems.push_back(new FireSystem());
+
+
+
         setScene(sampleScene);
     }
+
 
 
 };
